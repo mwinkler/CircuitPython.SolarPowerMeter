@@ -1,22 +1,31 @@
+from os import getenv
 import time
-import ha
-import ui
+#from ha import HomeAssistant
+from hafake import HomeAssistant
+from ui import Ui
+
+ha = HomeAssistant(getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
+ui = Ui()
 
 print("Starting...")
 
 # init
 ui.init()
-#ha.connect_wifi()
+ha.connect_wifi()
 
-# load data
-#bat = ha.get_battery_state()
 
 # draw data
 #ui.draw_battery_state(bat)
 #ui.draw_battery_state(10)
 
 while True:
-    for i in range(100):
-        ui.draw_battery_state(i)
-        time.sleep(0.1)
+    # load data
+    data = ha.get_data()
+
+    ui.draw_battery_state(data["battery_level"])
+    ui.draw_grid_power(data["grid_power"])
+
+    # for i in range(100):
+    #     ui.draw_battery_state(i)
+    #     time.sleep(0.1)
     time.sleep(2)

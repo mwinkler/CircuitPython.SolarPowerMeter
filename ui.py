@@ -33,38 +33,83 @@ battery_group.append(battery_level_text)
 battery_level_bar_group = displayio.Group()
 battery_group.append(battery_level_bar_group)
 
-def init():
-    battery_level_text.text = "load"
+# init grid power group
+grid_power_group = displayio.Group(x=1, y=7)
+matrix.display.root_group.append(grid_power_group)
 
-def draw_battery_state(battery_level):
-    # disable auto refresh to avoid flickering
-    matrix.display.auto_refresh = False
+# init battery image
+grid_image, palette = adafruit_imageload.load(
+    "assets/grid.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette
+)
+grid_tile = displayio.TileGrid(grid_image, pixel_shader=palette, x=0, y=0)
+grid_power_group.append(grid_tile)
 
-    level_int = int(float(battery_level))
-    battery_level_text.text = f"{level_int}%"
+# init grid power text
+grid_power_text = label.Label(font, color=0xFFFFFF, x=7, y=3)
+grid_power_group.append(grid_power_text)
 
-    # clear previous battery level bar
-    try:
-        battery_level_bar_group.pop()
-    except:
-        pass
-    
-    # set color by level
-    color = 0x00FF00
-    if battery_level >= 40:
+
+class Ui:
+
+    def init(self):
+        battery_level_text.text = "load"
+
+    def draw_battery_state(self, battery_level):
+        if battery_level is None:
+            return
+
+        # disable auto refresh to avoid flickering
+        matrix.display.auto_refresh = False
+
+        level_int = int(float(battery_level))
+        battery_level_text.text = f"{level_int}%"
+
+        # clear previous battery level bar
+        try:
+            battery_level_bar_group.pop()
+        except:
+            pass
+        
+        # set color by level
         color = 0x00FF00
-    elif battery_level >= 20:
-        color = 0xFFFF00
-    # elif battery_level >= 20:
-    #     color = 0xFFA500
-    else:
-        color = 0xFF0000
-    
-    battery_level_bar = Rect(1, 1, max(int(level_int // 9), 1), 3, fill=color)
-    battery_level_bar_group.append(battery_level_bar)
+        if level_int >= 40:
+            color = 0x00FF00
+        elif level_int >= 20:
+            color = 0xFFFF00
+        # elif battery_level >= 20:
+        #     color = 0xFFA500
+        else:
+            color = 0xFF0000
+        
+        battery_level_bar = Rect(1, 1, max(int(level_int // 9), 1), 3, fill=color)
+        battery_level_bar_group.append(battery_level_bar)
 
-    # update the display
-    matrix.display.auto_refresh = True
+        # update the display
+        matrix.display.auto_refresh = True
 
-# export the function
-__all__ = ["draw_battery_state", "init"]
+    def draw_grid_power(self, grid_power):
+        if grid_power is None:
+            return
+
+        # disable auto refresh to avoid flickering
+        matrix.display.auto_refresh = False
+
+        grid_power_text.color = 0xFFFFFF if grid_power >= 0 else 0xFF0000
+        grid_power_text.text = f"{abs(grid_power)}"
+
+        # update the display
+        matrix.display.auto_refresh = True
+
+    def draw_inverter_output(self, inverter_output):
+        if inverter_output is None:
+            return
+
+        # disable auto refresh to avoid flickering
+        matrix.display.auto_refresh = False
+
+        inverter_output_text = label.Label(font, color=0xFFFFFF, x=1, y=10)
+        inverter_output_text.text = f"{inverter_output}W"
+        matrix.display.root_group.append(inverter_output_text)
+
+        # update the display
+        matrix.display.auto_refresh = True
