@@ -1,8 +1,7 @@
 {
     "python.analysis.diagnosticSeverityOverrides": {
-        //"reportMissingImports": "none",
-        //"reportMissingModuleSource": "none",
-        "reportShadowedImports": "none"
+        "reportShadowedImports": "none",
+        "reportMissingModuleSource": "none"
     },
     "python.languageServer": "Pylance",
     "python.analysis.extraPaths": [

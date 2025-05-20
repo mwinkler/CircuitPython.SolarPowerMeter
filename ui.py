@@ -5,6 +5,9 @@ import adafruit_imageload
 from adafruit_bitmap_font import bitmap_font
 from adafruit_display_shapes.rect import Rect
 
+# settings
+left_offset = 1
+
 # create the matrix display
 matrix = Matrix(width=32, height=32, bit_depth=4)
 
@@ -15,7 +18,7 @@ font = bitmap_font.load_font("assets/04B_03__6pt.pcf", displayio.Bitmap)
 matrix.display.root_group = displayio.Group()
 
 # init battery group
-battery_group = displayio.Group(x=1, y=1)
+battery_group = displayio.Group(x=left_offset, y=1)
 matrix.display.root_group.append(battery_group)
 
 # init battery image
@@ -34,7 +37,7 @@ battery_level_bar_group = displayio.Group()
 battery_group.append(battery_level_bar_group)
 
 # init grid power group
-grid_power_group = displayio.Group(x=1, y=7)
+grid_power_group = displayio.Group(x=left_offset, y=7)
 matrix.display.root_group.append(grid_power_group)
 
 # init battery image
@@ -45,9 +48,19 @@ grid_tile = displayio.TileGrid(grid_image, pixel_shader=palette, x=0, y=0)
 grid_power_group.append(grid_tile)
 
 # init grid power text
-grid_power_text = label.Label(font, color=0xFFFFFF, x=7, y=3)
+grid_power_text = label.Label(font, color=0xFFFFFF, x=8, y=3)
 grid_power_group.append(grid_power_text)
 
+# init inverter output group
+inverter_output_group = displayio.Group(x=left_offset, y=15)
+matrix.display.root_group.append(inverter_output_group)
+
+# init inverter output image
+inverter_image, palette = adafruit_imageload.load(
+    "assets/sun.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette
+)
+inverter_tile = displayio.TileGrid(inverter_image, pixel_shader=palette, x=0, y=0)
+inverter_output_group.append(inverter_tile)
 
 class Ui:
 

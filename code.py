@@ -3,7 +3,9 @@ import time
 #from ha import HomeAssistant
 from hafake import HomeAssistant
 from ui import Ui
+from wifi import Wifi
 
+wifi = Wifi(getenv("CIRCUITPY_WIFI_SSID"), getenv("CIRCUITPY_WIFI_PASSWORD"))
 ha = HomeAssistant(getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
 ui = Ui()
 
@@ -11,13 +13,9 @@ print("Starting...")
 
 # init
 ui.init()
-ha.connect_wifi()
+#session = wifi.connect()
 
-
-# draw data
-#ui.draw_battery_state(bat)
-#ui.draw_battery_state(10)
-
+# start app loop
 while True:
     # load data
     data = ha.get_data()
