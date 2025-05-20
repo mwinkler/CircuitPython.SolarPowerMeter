@@ -4,6 +4,7 @@ state_battery_level = "sensor.batteries_state_of_capacity"
 state_battery_charge_discharge_power = "sensor.batteries_charge_discharge_power"
 state_inverter_output = "sensor.inverter_input_power"
 state_grid_power = "sensor.power_meter_active_power"
+state_house_consumption = "sensor.shellypro3em_e05a1b334ed4_total_active_power"
 
 #esp._debug = True
 
@@ -48,12 +49,18 @@ class HomeAssistant:
         print(f"Battery charge/discharge power {data}W")
         return data
     
+    def _get_house_consumption(self):
+        data = self._fetch_state(state_house_consumption)
+        print(f"House consumption {data}W")
+        return data
+    
     def get_data(self):
         data = {
             "battery_level": self._get_battery_level(),
             "battery_charge_discharge_power": self._get_battery_charge_discharge_power(),
             "inverter_output": self._get_inverter_output(),
-            "grid_power": self._get_grid_power()
+            "grid_power": self._get_grid_power(),
+            "house_consumption": self._get_house_consumption()
         }
         return data
     

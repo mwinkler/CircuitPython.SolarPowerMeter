@@ -7,6 +7,7 @@ from adafruit_display_shapes.rect import Rect
 
 # settings
 left_offset = 1
+text_offset = 9
 
 # create the matrix display
 matrix = Matrix(width=32, height=32, bit_depth=4)
@@ -48,7 +49,7 @@ grid_tile = displayio.TileGrid(grid_image, pixel_shader=palette, x=0, y=0)
 grid_power_group.append(grid_tile)
 
 # init grid power text
-grid_power_text = label.Label(font, color=0xFFFFFF, x=8, y=3)
+grid_power_text = label.Label(font, color=0xFFFFFF, x=text_offset, y=3)
 grid_power_group.append(grid_power_text)
 
 # init inverter output group
@@ -61,6 +62,25 @@ inverter_image, palette = adafruit_imageload.load(
 )
 inverter_tile = displayio.TileGrid(inverter_image, pixel_shader=palette, x=0, y=0)
 inverter_output_group.append(inverter_tile)
+
+# init inverter output text
+inverter_output_text = label.Label(font, color=0xFFFFFF, x=text_offset, y=3)
+inverter_output_group.append(inverter_output_text)
+
+# init home group
+house_group = displayio.Group(x=left_offset, y=23)
+matrix.display.root_group.append(house_group)
+
+# init home image
+house_image, palette = adafruit_imageload.load(
+    "assets/home.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette
+)
+house_tile = displayio.TileGrid(house_image, pixel_shader=palette, x=0, y=0)
+house_group.append(house_tile)
+
+# init home text
+house_text = label.Label(font, color=0xFFFFFF, x=text_offset, y=3) 
+house_group.append(house_text)
 
 class Ui:
 
@@ -107,8 +127,10 @@ class Ui:
         # disable auto refresh to avoid flickering
         matrix.display.auto_refresh = False
 
-        grid_power_text.color = 0xFFFFFF if grid_power >= 0 else 0xFF0000
-        grid_power_text.text = f"{abs(grid_power)}"
+        grid_power_int = int(grid_power)
+
+        grid_power_text.color = 0xFFFFFF if grid_power_int >= 0 else 0xFF0000
+        grid_power_text.text = f"{abs(grid_power_int)}"
 
         # update the display
         matrix.display.auto_refresh = True
@@ -117,12 +139,10 @@ class Ui:
         if inverter_output is None:
             return
 
-        # disable auto refresh to avoid flickering
-        matrix.display.auto_refresh = False
+        inverter_output_text.text = f"{inverter_output}"
 
-        inverter_output_text = label.Label(font, color=0xFFFFFF, x=1, y=10)
-        inverter_output_text.text = f"{inverter_output}W"
-        matrix.display.root_group.append(inverter_output_text)
+    def draw_house_consumption(self, house_consumption):
+        if house_consumption is None:
+            return
 
-        # update the display
-        matrix.display.auto_refresh = True
+        house_text.text = f"{int(float(house_consumption))}"
