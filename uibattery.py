@@ -23,7 +23,7 @@ class UiBattery:
         self.level_bar_group = displayio.Group()
         group.append(self.level_bar_group)
 
-    def update_level(self, battery_level: int):
+    def update_level(self, battery_level: str):
         if battery_level is None:
             return
 

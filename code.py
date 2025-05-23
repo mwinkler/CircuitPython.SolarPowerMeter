@@ -3,20 +3,21 @@ import time
 from ha import HomeAssistant
 from hafake import HomeAssistantFake
 from ui import Ui
-from wifi import Wifi
+from wificonnection import Wifi
+from adafruit_matrixportal.matrix import Matrix
 
 refresh_rate = 60
 dev = True
 
 # init
-print("Starting...")
-
+matrix = Matrix(width=32, height=32, bit_depth=4)
 wifi = Wifi(getenv("CIRCUITPY_WIFI_SSID"), getenv("CIRCUITPY_WIFI_PASSWORD"))
-ui = Ui()
+ha = HomeAssistantFake() if dev else HomeAssistant(wifi, getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
+ui = Ui(matrix)
 
+# start
 ui.init()
-session = None if dev else wifi.connect()
-ha = HomeAssistantFake() if dev else HomeAssistant(session, getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
+#wifi.connect()
 
 # app loop
 while True:
@@ -30,3 +31,4 @@ while True:
     #     ui.draw_battery_state(i)
     #     time.sleep(0.1)
     time.sleep(5 if dev else refresh_rate)
+

@@ -1,4 +1,4 @@
-import adafruit_requests
+from wificonnection import Wifi
 
 state_battery_level = "sensor.batteries_state_of_capacity"
 state_battery_charge_discharge_power = "sensor.batteries_charge_discharge_power"
@@ -6,21 +6,20 @@ state_inverter_output = "sensor.inverter_input_power"
 state_grid_power = "sensor.power_meter_active_power"
 state_house_consumption = "sensor.shellypro3em_e05a1b334ed4_total_active_power"
 
-#esp._debug = True
-
 class HomeAssistant:
-    def __init__(self, session: adafruit_requests.Session, url: str, token: str):
+    def __init__(self, wifi: Wifi, url: str, token: str):
         self.url = url
         self.token = token
-        self.session = session
+        self.wifi = wifi
 
     def _fetch_state(self, entity_id):
-        print("Fetching state for entity: ", entity_id)
+        print("Fetching state for entity:", entity_id)
         url = f"{self.url}/api/states/{entity_id}"
         headers = { "Authorization": f"Bearer {self.token}" }
+        session = self.wifi.get_session()
         for attempt in range(3):
             try:
-                r = self.session.get(url, headers=headers)
+                r = session.get(url, headers=headers)
                 data = r.json()
                 #print("State data:", data)
                 return data["state"]

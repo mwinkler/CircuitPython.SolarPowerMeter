@@ -3,7 +3,7 @@ import adafruit_imageload
 from adafruit_display_text import label
 
 class UiElement:
-    def __init__(self, container: displayio.Group, image: str, x: int, y: int, text_x: int, text_y: int, font: object):
+    def __init__(self, container: displayio.Group, image: str=None, x: int=0, y: int=0, text_x: int=0, text_y: int=0, font: object=None):
         # init ui group
         group = displayio.Group(x=x, y=y)
         container.append(group)
