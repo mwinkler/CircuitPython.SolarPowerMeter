@@ -6,7 +6,6 @@ from uielement import UiElement
 
 # settings
 left_offset = 1
-text_offset = 9
 
 class Ui:
     def __init__(self, matrix: Matrix):
@@ -19,11 +18,10 @@ class Ui:
         font = bitmap_font.load_font("assets/04B_03__6pt.pcf", displayio.Bitmap)
         
         # init elements
-        #battery_level_text.text = "load"
         self.battery_ui = UiBattery(matrix.display.root_group, left_offset, 1, font, True)
-        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.bmp", left_offset, 7, text_offset, 3, font, True)
-        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun.bmp", left_offset, 15, text_offset, 3, font, True)
-        self.house_ui = UiElement(matrix.display.root_group, "assets/home.bmp", left_offset, 23, text_offset, 3, font, True)
+        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.bmp", left_offset, 7, font, True)
+        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun.png", left_offset, 15, font, True)
+        self.house_ui = UiElement(matrix.display.root_group, "assets/home.png", left_offset, 23, font, True)
         self.loader = UiElement(matrix.display.root_group, "assets/flash.png", font=font)
 
     def hide_loader(self):

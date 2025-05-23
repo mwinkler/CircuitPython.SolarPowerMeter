@@ -17,7 +17,7 @@ class UiBattery:
         self.group.append(battery_tile_grid)
 
         # text
-        self.level_text = label.Label(font, color=0xFFFFFF, x=14, y=2)
+        self.level_text = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(31, 0))
         self.group.append(self.level_text)
 
         # progress bar

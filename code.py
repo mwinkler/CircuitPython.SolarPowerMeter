@@ -6,8 +6,8 @@ from ui import Ui
 from wificonnection import Wifi
 from adafruit_matrixportal.matrix import Matrix
 
-refresh_rate = 60
-dev = False
+dev = True
+refresh_rate = 5 if dev else 60
 
 # init
 matrix = Matrix(width=32, height=32, bit_depth=4)
@@ -24,4 +24,4 @@ while True:
     ui.update(data)
 
     # wait
-    time.sleep(5 if dev else refresh_rate)
+    time.sleep(refresh_rate)
