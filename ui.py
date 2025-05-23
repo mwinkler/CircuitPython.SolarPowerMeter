@@ -20,17 +20,28 @@ class Ui:
         
         # init elements
         #battery_level_text.text = "load"
-        self.battery_ui = UiBattery(matrix.display.root_group, left_offset, 1, font)
-        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.bmp", left_offset, 7, text_offset, 3, font)
-        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun.bmp", left_offset, 15, text_offset, 3, font)
-        self.house_ui = UiElement(matrix.display.root_group, "assets/home.bmp", left_offset, 23, text_offset, 3, font)
+        self.battery_ui = UiBattery(matrix.display.root_group, left_offset, 1, font, True)
+        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.bmp", left_offset, 7, text_offset, 3, font, True)
+        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun.bmp", left_offset, 15, text_offset, 3, font, True)
+        self.house_ui = UiElement(matrix.display.root_group, "assets/home.bmp", left_offset, 23, text_offset, 3, font, True)
+        self.loader = UiElement(matrix.display.root_group, "assets/flash.png", font=font)
 
-    def init(self):
-        pass
+    def hide_loader(self):
+        # hide loader
+        self.loader.group.hidden = True
+
+        # show elements
+        self.battery_ui.group.hidden = False
+        self.grid_power_ui.group.hidden = False
+        self.inverter_ui.group.hidden = False
+        self.house_ui.group.hidden = False
 
     def update(self, data):
         # disable auto refresh to avoid flickering
         self.matrix.display.auto_refresh = False
+
+        # hide loader
+        self.hide_loader()
 
         # battery level
         self.battery_ui.update_level(data["battery_level"])

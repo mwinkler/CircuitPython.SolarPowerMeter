@@ -5,23 +5,24 @@ from adafruit_display_text import label
 from adafruit_display_shapes.rect import Rect
 
 class UiBattery:
-    def __init__(self, container: displayio.Group, x: int, y: int, font: object):
+    def __init__(self, container: displayio.Group, x: int, y: int, font: object, hidden: bool=False):
         # group
-        group = displayio.Group(x=x, y=y)
-        container.append(group)
+        self.group = displayio.Group(x=x, y=y)
+        self.group.hidden = hidden
+        container.append(self.group)
 
         # battery image
         battery_image, palette = adafruit_imageload.load("assets/battery.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
         battery_tile_grid = displayio.TileGrid(battery_image, pixel_shader=palette)
-        group.append(battery_tile_grid)
+        self.group.append(battery_tile_grid)
 
         # text
         self.level_text = label.Label(font, color=0xFFFFFF, x=14, y=2)
-        group.append(self.level_text)
+        self.group.append(self.level_text)
 
         # progress bar
         self.level_bar_group = displayio.Group()
-        group.append(self.level_bar_group)
+        self.group.append(self.level_bar_group)
 
     def update_level(self, battery_level: str):
         if battery_level is None:
@@ -50,3 +51,6 @@ class UiBattery:
         # draw battery level bar
         battery_level_bar = Rect(1, 1, max(int(level_int // 9), 1), 3, fill=color)
         self.level_bar_group.append(battery_level_bar)
+
+    def hidden(self, hidden: bool):
+        self.group.hidden = hidden

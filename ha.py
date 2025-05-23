@@ -62,4 +62,3 @@ class HomeAssistant:
             "house_consumption": self._get_house_consumption()
         }
         return data
-    
