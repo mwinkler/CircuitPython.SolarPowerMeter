@@ -1,6 +1,6 @@
 import random
 
-class HomeAssistant:
+class HomeAssistantFake:
     def connect_wifi(self):
         pass
 

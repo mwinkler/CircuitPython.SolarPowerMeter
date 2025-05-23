@@ -1,32 +1,32 @@
 from os import getenv
 import time
 from ha import HomeAssistant
-#from hafake import HomeAssistant
+from hafake import HomeAssistantFake
 from ui import Ui
 from wifi import Wifi
+
+refresh_rate = 60
+dev = True
+
+# init
+print("Starting...")
 
 wifi = Wifi(getenv("CIRCUITPY_WIFI_SSID"), getenv("CIRCUITPY_WIFI_PASSWORD"))
 ui = Ui()
 
-print("Starting...")
-
-# init
 ui.init()
-session = wifi.connect()
-ha = HomeAssistant(session, getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
+session = None if dev else wifi.connect()
+ha = HomeAssistantFake() if dev else HomeAssistant(session, getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
 
-# start app loop
+# app loop
 while True:
     # load data
     data = ha.get_data()
 
-    ui.draw_battery_state(data["battery_level"])
-    ui.draw_grid_power(data["grid_power"])
-    ui.draw_inverter_output(data["inverter_output"])
-    ui.draw_house_consumption(data["house_consumption"])
+    # display data
+    ui.update(data)
 
     # for i in range(100):
     #     ui.draw_battery_state(i)
     #     time.sleep(0.1)
-    time.sleep(60)
-
+    time.sleep(5 if dev else refresh_rate)
