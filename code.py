@@ -6,7 +6,7 @@ from ui import Ui
 from wificonnection import Wifi
 from adafruit_matrixportal.matrix import Matrix
 
-dev = True
+dev = False
 refresh_rate = 5 if dev else 60
 
 # init
@@ -17,11 +17,14 @@ ui = Ui(matrix)
 
 # app loop
 while True:
-    # load data
-    data = ha.get_data()
+    try:
+        # load data
+        data = ha.get_data()
 
-    # display data
-    ui.update(data)
+        # display data
+        ui.update(data)
+    except Exception as e:
+        print(f"Error: {e}")
 
     # wait
     time.sleep(refresh_rate)
