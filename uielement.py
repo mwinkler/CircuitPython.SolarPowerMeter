@@ -15,7 +15,7 @@ class UiElement:
         self.group.append(image_tile)
 
         # text
-        self.text_tile = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(62, 2), scale=2)
+        self.text_tile = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(64, 2), scale=2)
         self.group.append(self.text_tile)
 
     def update_text(self, text: str, color: int = 0xFFFFFF):

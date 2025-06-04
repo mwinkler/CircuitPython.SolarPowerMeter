@@ -6,8 +6,8 @@ from ui import Ui
 from wificonnection import Wifi
 from adafruit_matrixportal.matrix import Matrix
 
-dev = False
-refresh_rate = 5 if dev else 60
+dev = True
+refresh_rate = 2 if dev else 60
 
 # init
 matrix = Matrix(width=64, height=64)
