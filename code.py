@@ -10,7 +10,7 @@ dev = False
 refresh_rate = 5 if dev else 60
 
 # init
-matrix = Matrix(width=32, height=32, bit_depth=4)
+matrix = Matrix(width=64, height=64)
 wifi = Wifi(getenv("CIRCUITPY_WIFI_SSID"), getenv("CIRCUITPY_WIFI_PASSWORD"))
 ha = HomeAssistantFake() if dev else HomeAssistant(wifi, getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
 ui = Ui(matrix)

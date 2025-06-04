@@ -19,10 +19,10 @@ class Ui:
         
         # init elements
         self.battery_ui = UiBattery(matrix.display.root_group, left_offset, 1, font, True)
-        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.bmp", left_offset, 7, font, True)
-        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun.png", left_offset, 15, font, True)
-        self.house_ui = UiElement(matrix.display.root_group, "assets/home.png", left_offset, 23, font, True)
-        self.loader = UiElement(matrix.display.root_group, "assets/flash.png", font=font)
+        self.inverter_ui = UiElement(matrix.display.root_group, "assets/sun2.png", left_offset, 14, font, True)
+        self.house_ui = UiElement(matrix.display.root_group, "assets/home2.png", left_offset, 31, font, True)
+        self.grid_power_ui = UiElement(matrix.display.root_group, "assets/grid.png", left_offset, 48, font, True)
+        self.loader = UiElement(matrix.display.root_group, "assets/flash.png", font=font, x=16, y=16)
 
     def hide_loader(self):
         # hide loader
