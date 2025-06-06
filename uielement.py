@@ -11,11 +11,11 @@ class UiElement:
 
         # image
         image, palette = adafruit_imageload.load(image, bitmap=displayio.Bitmap, palette=displayio.Palette)
-        image_tile = displayio.TileGrid(image, pixel_shader=palette, x=0, y=0)
+        image_tile = displayio.TileGrid(image, pixel_shader=palette, x=46, y=0)
         self.group.append(image_tile)
 
         # text
-        self.text_tile = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(64, 2), scale=2)
+        self.text_tile = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(43, 2), scale=2)
         self.group.append(self.text_tile)
 
     def update_text(self, text: str, color: int = 0xFFFFFF):
