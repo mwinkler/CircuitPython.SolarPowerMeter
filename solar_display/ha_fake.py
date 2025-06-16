@@ -4,9 +4,6 @@ class HomeAssistantFake:
     def __init__(self):
         self.bat = 100
 
-    def connect_wifi(self):
-        pass
-
     def get_data(self):
         self.bat = self.bat - 5 if self.bat > 0 else 100
         return {
