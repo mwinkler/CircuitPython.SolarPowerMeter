@@ -1,15 +1,16 @@
-import time
-from os import getenv
-from solar_display.ha import HomeAssistant
-from solar_display.ha_fake import HomeAssistantFake
-from solar_display.ui import Ui
 import rgbmatrix
 import framebufferio
 import board
 import displayio
+import asyncio
+from os import getenv
+from solar_display.ha import HomeAssistant
+from solar_display.ha_fake import HomeAssistantFake
+from solar_display.ui import Ui
+from solar_display.mqtt import MqttConnector
 
 # settings
-dev = True
+dev = False
 refresh_rate = 2 if dev else 60
 
 # init
@@ -25,17 +26,31 @@ matrix = rgbmatrix.RGBMatrix(
 display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
 ha = HomeAssistantFake() if dev else HomeAssistant(getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
 ui = Ui(display)
+mqtt = MqttConnector(getenv("MQTT_BROKER"), getenv("MQTT_USERNAME"), getenv("MQTT_PASSWORD"))
+
+def mqtt_callback(message):
+    print(f"MQTT message received: {message}")
 
 # app loop
-while True:
-    try:
-        # load data
-        data = ha.get_data()
+async def main():
+    mqtt.subscribe("zigbee2mqtt/Cube1", mqtt_callback)
 
-        # display data
-        ui.update(data)
-    except Exception as e:
-        print(f"Error: {e}")
+    while True:
+        try:
+            # load data
+            data = await ha.get_data()
 
-    # wait
-    time.sleep(refresh_rate)
+            # update mqtt
+            mqtt.poll()
+
+            # display data
+            ui.update(data)
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+        # wait
+        await asyncio.sleep(refresh_rate)
+
+# run app
+asyncio.run(main())

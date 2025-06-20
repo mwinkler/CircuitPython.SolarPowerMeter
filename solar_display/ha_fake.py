@@ -4,7 +4,7 @@ class HomeAssistantFake:
     def __init__(self):
         self.bat = 100
 
-    def get_data(self):
+    async def get_data(self):
         self.bat = self.bat - 5 if self.bat > 0 else 100
         return {
             "battery_level": self.bat,

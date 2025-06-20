@@ -1,20 +1,15 @@
-
 import displayio
-import adafruit_imageload
 from adafruit_display_text import label
 from adafruit_display_shapes.rect import Rect
+from solar_display.ui_image import UiImage
+from solar_display.ui_base import UiBase
 
-class UiBattery:
+class UiBattery(UiBase):
     def __init__(self, container: displayio.Group, x: int, y: int, font: object, hidden: bool=False):
-        # group
-        self._group = displayio.Group(x=x, y=y)
-        self._group.hidden = hidden
-        container.append(self._group)
+        UiBase.__init__(self, container, x=x, y=y, hidden=hidden)
 
         # battery image
-        battery_image, palette = adafruit_imageload.load("assets/bat.png", bitmap=displayio.Bitmap, palette=displayio.Palette)
-        battery_tile_grid = displayio.TileGrid(battery_image, pixel_shader=palette)
-        self._group.append(battery_tile_grid)
+        UiImage(self._group, "assets/bat.png", 0, 0)
 
         # text
         self._level_text = label.Label(font, color=0xFFFFFF, anchor_point=(1.0, 0.0), anchored_position=(62, 0), scale=2)
@@ -51,6 +46,3 @@ class UiBattery:
         # draw battery level bar
         battery_level_bar = Rect(2, 2, min(max(int(level_int // 5.1), 1), 18), 6, fill=color)
         self._level_bar_group.append(battery_level_bar)
-
-    def hidden(self, hidden: bool):
-        self._group.hidden = hidden
