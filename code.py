@@ -49,7 +49,7 @@ async def main():
                 last_data_fetch = now
 
             # update mqtt
-            mqtt.poll()
+            #mqtt.poll()
 
             # display data
             ui.update(data)

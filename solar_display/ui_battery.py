@@ -20,6 +20,10 @@ class UiBattery(UiBase):
         self._level_bar_group = displayio.Group()
         self._group.append(self._level_bar_group)
 
+        # drain blinker
+        self._drain_blinker = Rect(2, 2, 1, 6, fill=0x0)
+        self._group.append(self._drain_blinker)
+
         # charge image
         self._charge_image = UiImage(self._group, "assets/bat_charge_2.png", 7, -1, hidden=True)
 
@@ -44,8 +48,13 @@ class UiBattery(UiBase):
             color = 0xFF0000
         
         # draw battery level bar
-        battery_level_bar = Rect(2, 2, min(max(int(data.battery_level // 5.1), 1), 18), 6, fill=color)
+        level_width = min(max(int(data.battery_level // 5.1), 1), 18)
+        battery_level_bar = Rect(2, 2, level_width, 6, fill=color)
         self._level_bar_group.append(battery_level_bar)
+
+        # show drain blinker if discharging
+        self._drain_blinker.x = level_width + 1
+        self._drain_blinker.fill = color if data.battery_charge_discharge_rate > -10 or self._drain_blinker.fill == 0x0 else 0x0
         
         # show charge image if charging
         self._charge_image.show(data.battery_charge_discharge_rate > 10)
