@@ -2,7 +2,7 @@ import adafruit_requests
 import ssl
 import socketpool
 import wifi
-import asyncio
+from solar_display.ha_data import HaData
 
 state_battery_level = "sensor.batteries_state_of_capacity"
 state_battery_charge_discharge_power = "sensor.batteries_charge_discharge_power"
@@ -24,44 +24,29 @@ class HomeAssistant:
             try:
                 response = self.session.get(url, headers=headers)
                 data = response.json()
+                print("State for entity", entity_id, ":", data["state"])
                 #print("State data:", data)
                 return data["state"]
             except Exception as e:
                 print(f"Attempt {attempt + 1} failed: {e}")
                 if attempt == 2:
                     return None
+                
+    async def _fetch_int(self, entity_id):
+        data = await self._fetch_state(entity_id)
+        if data is not None:
+            try:
+                return int(float(data))
+            except ValueError:
+                print(f"Invalid integer value for {entity_id}: {data}")
+                return None
+        return None
 
-    async def _get_battery_level(self):
-        data = await self._fetch_state(state_battery_level)
-        print(f"Battery level {data}%")
-        return data
-
-    async def _get_inverter_output(self):
-        data = await self._fetch_state(state_inverter_output)
-        print(f"Inverter output {data}W")
-        return data
-
-    async def _get_grid_power(self):
-        data = await self._fetch_state(state_grid_power)
-        print(f"Grid power {data}W")
-        return data
-    
-    async def _get_battery_charge_discharge_power(self):
-        data = await self._fetch_state(state_battery_charge_discharge_power)
-        print(f"Battery charge/discharge power {data}W")
-        return data
-    
-    async def _get_house_consumption(self):
-        data = await self._fetch_state(state_house_consumption)
-        print(f"House consumption {data}W")
-        return data
-    
     async def get_data(self):
-        data = {
-            "battery_level": await self._get_battery_level(),
-            "battery_charge_discharge_power": await self._get_battery_charge_discharge_power(),
-            "inverter_output": await self._get_inverter_output(),
-            "grid_power": await self._get_grid_power(),
-            "house_consumption": await self._get_house_consumption()
-        }
-        return data
+        return HaData(
+            battery_level = await self._fetch_int(state_battery_level),
+            battery_charge_discharge_rate = await self._fetch_int(state_battery_charge_discharge_power),
+            inverter_output = await self._fetch_int(state_inverter_output),
+            grid_power = await self._fetch_int(state_grid_power),
+            house_consumption = await self._fetch_int(state_house_consumption)
+        )

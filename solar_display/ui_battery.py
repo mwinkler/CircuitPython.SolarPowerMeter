@@ -3,6 +3,7 @@ from adafruit_display_text import label
 from adafruit_display_shapes.rect import Rect
 from solar_display.ui_image import UiImage
 from solar_display.ui_base import UiBase
+from solar_display.ha_data import HaData
 
 class UiBattery(UiBase):
     def __init__(self, container: displayio.Group, x: int, y: int, font: object, hidden: bool=False):
@@ -19,12 +20,11 @@ class UiBattery(UiBase):
         self._level_bar_group = displayio.Group()
         self._group.append(self._level_bar_group)
 
-    def update_level(self, battery_level: str):
-        if battery_level is None:
-            return
+        # charge image
+        self._charge_image = UiImage(self._group, "assets/bat_charge_2.png", 7, -1, hidden=True)
 
-        level_int = int(float(battery_level))
-        self._level_text.text = f"{level_int}%"
+    def update(self, data: HaData):
+        self._level_text.text = f"{data.battery_level}%"
 
         # clear previous battery level bar
         try:
@@ -34,9 +34,9 @@ class UiBattery(UiBase):
         
         # set color by level
         color = 0x00FF00
-        if level_int >= 40:
+        if data.battery_level >= 40:
             color = 0x00FF00
-        elif level_int >= 20:
+        elif data.battery_level >= 20:
             color = 0xFFFF00
         # elif battery_level >= 20:
         #     color = 0xFFA500
@@ -44,5 +44,8 @@ class UiBattery(UiBase):
             color = 0xFF0000
         
         # draw battery level bar
-        battery_level_bar = Rect(2, 2, min(max(int(level_int // 5.1), 1), 18), 6, fill=color)
+        battery_level_bar = Rect(2, 2, min(max(int(data.battery_level // 5.1), 1), 18), 6, fill=color)
         self._level_bar_group.append(battery_level_bar)
+        
+        # show charge image if charging
+        self._charge_image.show(data.battery_charge_discharge_rate > 10)

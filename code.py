@@ -3,6 +3,7 @@ import framebufferio
 import board
 import displayio
 import asyncio
+import time
 from os import getenv
 from solar_display.ha import HomeAssistant
 from solar_display.ha_fake import HomeAssistantFake
@@ -11,7 +12,9 @@ from solar_display.mqtt import MqttConnector
 
 # settings
 dev = False
-refresh_rate = 2 if dev else 60
+data_refresh_rate = 2 if dev else 60
+ui_refresh_rate = 0.5
+control_cube_mqtt_topic = "zigbee2mqtt/Cube1"
 
 # init
 displayio.release_displays()
@@ -23,9 +26,8 @@ matrix = rgbmatrix.RGBMatrix(
     latch_pin=board.MTX_LAT,
     output_enable_pin=board.MTX_OE,
     doublebuffer=True)
-display = framebufferio.FramebufferDisplay(matrix, auto_refresh=True)
+ui = Ui(framebufferio.FramebufferDisplay(matrix, auto_refresh=True))
 ha = HomeAssistantFake() if dev else HomeAssistant(getenv('HOMEASSISTANT_URL'), getenv('HOMEASSISTANT_TOKEN'))
-ui = Ui(display)
 mqtt = MqttConnector(getenv("MQTT_BROKER"), getenv("MQTT_USERNAME"), getenv("MQTT_PASSWORD"))
 
 def mqtt_callback(message):
@@ -33,12 +35,18 @@ def mqtt_callback(message):
 
 # app loop
 async def main():
-    mqtt.subscribe("zigbee2mqtt/Cube1", mqtt_callback)
+    mqtt.subscribe(control_cube_mqtt_topic, mqtt_callback)
+
+    last_data_fetch = 0
+    data = None
 
     while True:
         try:
-            # load data
-            data = await ha.get_data()
+            # refresh data
+            now = time.monotonic()
+            if now - last_data_fetch >= data_refresh_rate or data is None:
+                data = await ha.get_data()
+                last_data_fetch = now
 
             # update mqtt
             mqtt.poll()
@@ -50,7 +58,7 @@ async def main():
             print(f"Error: {e}")
 
         # wait
-        await asyncio.sleep(refresh_rate)
+        await asyncio.sleep(ui_refresh_rate)
 
 # run app
 asyncio.run(main())
